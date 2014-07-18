@@ -1,0 +1,64 @@
+director_uuid: 8ff3f841-cf47-447c-9bf7-398bdd2c9cbe
+name: syslog-listener-warden
+
+compilation:
+  cloud_properties:
+    name: random
+  network: syslog_listener1
+  reuse_compilation_vms: true
+  workers: 6
+
+releases:
+- name: syslog_listener
+  version: latest
+
+jobs:
+- name: syslog_listener
+  instances: 1
+  resource_pool: smallz_z1
+  release: syslog_listener
+  templates:
+  - name: syslog_listener
+    release: syslog_listener
+  networks:
+  - name: syslog_listener1
+    static_ips:
+    - 10.244.22.2
+
+networks:
+- name: syslog_listener1
+  subnets:
+  - cloud_properties:
+      name: random
+    range: 10.244.22.0/30
+    reserved:
+    - 10.244.22.1
+    static:
+    - 10.244.22.2
+
+  - cloud_properties:
+      name: random
+    range: 10.244.22.4/30
+    reserved: []
+    static: []
+
+properties:
+  syslog_aggregator:
+    port: 9876
+
+update:
+  canaries: 0
+  canary_watch_time: 1000-60000
+  max_in_flight: 10
+  serial: false
+  update_watch_time: 1000-60000
+
+resource_pools:
+- cloud_properties:
+    name: random
+  name: smallz_z1
+  network: syslog_listener1
+  size: 1
+  stemcell:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+    version: 3

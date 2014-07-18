@@ -1,0 +1,13 @@
+---
+name: syslog_listener
+
+templates:
+  syslog_listener_ctl.erb: bin/syslog_listener_ctl
+  tcp_server.rb: bin/tcp_server.rb
+
+packages:
+- ruby
+
+properties:
+  syslog_aggregator.port:
+    description: "The port to which rsyslog will forward log messages"

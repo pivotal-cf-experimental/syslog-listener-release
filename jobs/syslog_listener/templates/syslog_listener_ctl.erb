@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+RUN_DIR=/var/vcap/sys/run/syslog_listener
+LOG_DIR=/var/vcap/sys/log/syslog_listener
+PIDFILE=$RUN_DIR/syslog_listener.pid
+
+case $1 in
+
+  start)
+    mkdir -p $RUN_DIR
+    mkdir -p $LOG_DIR
+
+    echo $$ > $PIDFILE
+
+    exec /var/vcap/packages/ruby/bin/ruby /var/vcap/jobs/syslog_listener/bin/tcp_server.rb <%= p("syslog_aggregator.port") %> \
+      1>>$LOG_DIR/syslog_listener.stdout.log \
+      2>>$LOG_DIR/syslog_listener.stderr.log
+
+    ;;
+
+  stop)
+    kill -9 $(cat $PIDFILE)
+    rm $PIDFILE
+
+    ;;
+
+  *)
+    echo "Usage: syslog_listener {start|stop}"
+
+    ;;
+
+esac

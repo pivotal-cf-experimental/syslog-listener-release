@@ -1,0 +1,5 @@
+check process syslog_listener
+  with pidfile /var/vcap/sys/run/syslog_listener/syslog_listener.pid
+  start program "/var/vcap/jobs/syslog_listener/bin/syslog_listener_ctl start"
+  stop program "/var/vcap/jobs/syslog_listener/bin/syslog_listener_ctl stop"
+  group vcap
